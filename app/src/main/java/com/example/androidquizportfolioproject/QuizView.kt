@@ -1,5 +1,6 @@
 package com.example.androidquizportfolioproject
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +27,9 @@ public class QuizView : AppCompatActivity(), OnClickListener {
     var progressBarQuiz: ProgressBar? = null
     var progressText: TextView? = null
     var currentQuestion: Int = 0
+    var totalQuestions:Int=0;
     var currentAnswer: Int = 0
+    var score:Int=0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +85,8 @@ public class QuizView : AppCompatActivity(), OnClickListener {
         // Set answer number
         currentAnswer = currentQuestion.correctAnswer
 
+        totalQuestions=getQuestions.size
+
 
     }
 
@@ -121,24 +126,47 @@ public class QuizView : AppCompatActivity(), OnClickListener {
 
 
     fun onSubmit() {
-        submitButton?.setText("Next")
+        submitButton?.text = "Next"
 
         when (currentAnswer) {
-            1 -> answerOne?.background = ContextCompat.getDrawable(this, R.drawable.correct_answer)
-            2 -> answerTwo?.background = ContextCompat.getDrawable(this, R.drawable.correct_answer)
-            3 -> answerThree?.background =
-                ContextCompat.getDrawable(this, R.drawable.correct_answer)
-
-            4 -> answerFour?.background = ContextCompat.getDrawable(this, R.drawable.correct_answer)
+            1 -> {
+                answerOne?.background = ContextCompat.getDrawable(this, R.drawable.correct_answer)
+            }
+            2 -> {
+                answerTwo?.background = ContextCompat.getDrawable(this, R.drawable.correct_answer)
+            }
+            3 -> {
+                answerThree?.background = ContextCompat.getDrawable(this, R.drawable.correct_answer)
+            }
+            4 -> {
+                answerFour?.background = ContextCompat.getDrawable(this, R.drawable.correct_answer)
+            }
         }
+
+        Toast.makeText(this,"This is question ${currentQuestion+1}/${totalQuestions}",Toast.LENGTH_SHORT).show()
 
 
     }
 
+    fun recordAnswer(selectedAnswer:Int){
+        if(selectedAnswer==currentAnswer){
+            score+=1
+
+        }else{
+            null
+        }
+
+    }
+
     fun onNext() {
+        if (currentQuestion+1==totalQuestions){
+            val intent = Intent(this, ResultActivity::class.java)
+            intent.putExtra("totalAnswers",score)
+            startActivity(intent)
+        }else{
         currentQuestion += 1
         defaultOptionsView()
-        setQuestion(currentQuestion)
+        setQuestion(currentQuestion)}
     }
 
 
@@ -148,21 +176,29 @@ public class QuizView : AppCompatActivity(), OnClickListener {
             R.id.answerOne -> {
                 selectedOptionsView(answerOne, 1)
                 onSubmit()
+                recordAnswer(1)
+
             }
 
             R.id.answerTwo -> {
                 selectedOptionsView(answerTwo, 2)
                 onSubmit()
+                recordAnswer(2)
+
             }
 
             R.id.answerThree -> {
                 selectedOptionsView(answerThree, 3)
                 onSubmit()
+                recordAnswer(3)
+
             }
 
             R.id.answerFour -> {
                 selectedOptionsView(answerFour, 4)
                 onSubmit()
+                recordAnswer(4)
+
             }
 
             R.id.submitButton -> {
